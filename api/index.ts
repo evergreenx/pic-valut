@@ -1,14 +1,13 @@
 import { create } from "apisauce";
-
+import { API_URL, API_KEY } from "@env";
 const api = create({
-  baseURL: "https://api.unsplash.com",
-  headers: {
-    Accept: "application/vnd.github.v3+json",
-  },
+  baseURL: API_URL,
 });
 
-const getPhotos = (query: any) => {
-  return api.get("/photos", { query: query, 
-    client_id: 
-    per_page: 10, page: 1 });
+export const getPhotos = (query: string , perPage = 5) => {
+  return api.get("/search/photos", {
+    query: query,
+    client_id: API_KEY,
+    per_page: perPage,
+  });
 };

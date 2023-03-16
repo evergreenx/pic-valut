@@ -1,269 +1,35 @@
-import { View, Text, ViewStyle, TextStyle } from "react-native";
+import {
+  View,
+  Text,
+  ViewStyle,
+  TextStyle,
+  Image,
+  ImageStyle,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Link, Stack } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { create } from "apisauce";
-import {API_URL} from "@env"
-
+import { API_URL, API_KEY } from "@env";
+import { getPhotos } from "../api";
 
 const api = create({
   baseURL: "https://api.unsplash.com",
 });
 
-// api.setHeaders({
-//   Authorization: "MVMKcgv8uACEYG2A5YvOx6G8cLMWb6PCs8snILpyM3Q",
-// });
-console.log(API_URL)
-
-
-const DATA = [
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-  {
-    title: "First Item",
-  },
-  {
-    title: "Second Item",
-  },
-];
-
-const renderItem = ({ item }: any) => <Text>{item.title}</Text>;
 export default function Index() {
   const [time, setTime] = useState(new Date());
-
-  // console.log(Config.API_URL)
-
-
-
-
-// console.log(process.env)
+  const [data, setData] = useState([]);
+  const [columns, setColumns] = useState(2);
+  const [searchQuery, setSearchQuery] = useState("book");
 
   useEffect(() => {
-    api
-      .get("/search/photos" , {
-        
-        query: 'car',
-        client_id: "6BguTKo0SLW85C-gWpQsP5WGxMvtSQfDJBXZRLi0LTE",
+    getPhotos(searchQuery).then((res) => {
+      setData(res?.data?.results);
+    });
+  }, [searchQuery]);
 
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .then((res) => {});
+  useEffect(() => {
     const intervalID = setInterval(() => {
       setTime(new Date());
     }, 1000);
@@ -290,6 +56,10 @@ export default function Index() {
     return ` ${daysOfWeek[time.getDay()]}  ${hours}:${minutes}:${seconds}`;
   };
 
+  const renderItem = ({ item }: any) => (
+    <Image source={{ uri: item?.urls?.regular }} style={$image} />
+  );
+
   return (
     <View style={$container}>
       <Stack.Screen
@@ -297,29 +67,23 @@ export default function Index() {
           headerShown: false,
         }}
       />
-
       <View>
         <Text style={$text}>Image Gallery</Text>
         <Text style={$time}>{formatTime(time)}</Text>
-      
-        {/* <Text>
-        {apiUrl}
-      </Text> */}
-
-      <Text>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione nobis assumenda, est excepturi nihil, ducimus, architecto eaque sed ab recusandae in tempore error enim reiciendis placeat cumque. Corporis, ipsam quasi.
-      </Text>
       </View>
-
-
-     
 
       <View style={$bgwhite}>
         <FlashList
-          data={DATA}
+          data={data}
           renderItem={renderItem}
-          estimatedItemSize={200}
-          showsHorizontalScrollIndicator={false}
+          estimatedItemSize={100}
+          numColumns={columns}
+          onLayout={(event) => {
+            const { width } = event.nativeEvent.layout;
+            const columnWidth = 200 + 10;
+            const newColumns = Math.floor(width / columnWidth) || 1;
+            setColumns(newColumns);
+          }}
         />
       </View>
     </View>
@@ -328,15 +92,11 @@ export default function Index() {
 
 const $container: ViewStyle = {
   flex: 1,
-
-  backgroundColor: "green",
-  // alignItems: "center",
-  // justifyContent: "center",
+  backgroundColor: "#228B22",
 };
 
 const $bgwhite: ViewStyle = {
   backgroundColor: "#fff",
-  // flex: 1,
   position: "absolute",
   height: "70%",
   width: "100%",
@@ -345,9 +105,6 @@ const $bgwhite: ViewStyle = {
   borderTopStartRadius: 50,
   flexBasis: "auto",
   marginTop: 270,
-  // marginLeft: 50,
-  // marginRight: 50,
-  // marginBottom: 50,
   padding: 20,
 };
 
@@ -367,4 +124,11 @@ const $time: TextStyle = {
   fontWeight: "bold",
   marginTop: 10,
   textAlign: "center",
+};
+
+const $image: ImageStyle = {
+  width: 120, // adjust image width as per your need
+  height: 200, // adjust image height as per your need
+  margin: 5,
+  borderRadius: 10,
 };
